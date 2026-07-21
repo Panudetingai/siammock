@@ -1,26 +1,41 @@
 use std::collections::HashMap;
-use serde::{Deserialize, Serialize};
+
+use serde::Deserialize;
+use serde_json::Value;
 
 #[derive(Deserialize)]
-struct MockConfig {
-    routes: Vec<MockRoute>,
+pub struct MockConfig {
+    pub routes: Vec<MockRoute>,
 }
 
 #[derive(Deserialize, Clone)]
-struct MockRoute {
-    path: String,
-    method: String,
-    request: Option<RequestSpec>,
-    response: ResponseSpec,
+pub struct MockRoute {
+    pub path: String,
+    pub method: String,
+    #[serde(default)]
+    #[allow(dead_code)]
+    pub summary: Option<String>,
+    pub request: Option<RequestSpec>,
+    pub response: ResponseSpec,
 }
 
 #[derive(Deserialize, Clone)]
-struct RequestSpec {
-    body: HashMap<String, String>, // "name": "string"
+pub struct RequestSpec {
+    #[serde(default)]
+    #[allow(dead_code)]
+    pub headers: Option<HashMap<String, Value>>,
+    #[serde(default)]
+    #[allow(dead_code)]
+    pub query_params: Option<HashMap<String, Value>>,
+    #[serde(default)]
+    pub body: Option<HashMap<String, Value>>,
 }
 
 #[derive(Deserialize, Clone)]
-struct ResponseSpec {
-    status: u16,
-    body: serde_json::Value,
+pub struct ResponseSpec {
+    pub status: u16,
+    #[serde(default)]
+    #[allow(dead_code)]
+    pub headers: Option<HashMap<String, Value>>,
+    pub body: Value,
 }

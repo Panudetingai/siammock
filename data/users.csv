@@ -1,0 +1,6 @@
+id,first_name,last_name,email,phone,role,status
+1,สมชาย,ใจดี,somchai@example.com,0812345678,customer,active
+2,สมหญิง,รักเรียน,somying@example.com,0898765432,customer,active
+3,วิชัย,มั่นคง,wichai@example.com,0823456789,admin,active
+4,นภา,สุขใจ,napha@example.com,0834567890,customer,inactive
+5,ประเสริฐ,เก่งกาจ,prasert@example.com,0845678901,customer,active

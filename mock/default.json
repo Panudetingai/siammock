@@ -1,65 +1,249 @@
 {
     "routes": [
-        {
-            "path": "/api/users",
-            "method": "GET",
-            "response": {
-                "status": 200,
-                "body": {
-                    "users": [
-                        {
-                            "id": "{{uuid}}",
-                            "name": "{{thai_name}}",
-                            "email": "{{email}}",
-                            "created_at": "{{timestamp}}"
-                        }
-                    ],
-                    "total": 10
-                }
-            }
+      {
+        "path": "/api/v1/auth/login",
+        "method": "POST",
+        "summary": "User authentication",
+        "request": {
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "body": {
+            "email": "user@example.com",
+            "password": "SecretPassword123!"
+          }
         },
-        {
-            "path": "/api/users/:id",
-            "method": "GET",
-            "response": {
-                "status": 200,
-                "body": {
-                    "id": "{{param:id}}",
-                    "name": "{{thai_name}}",
-                    "email": "{{email}}"
-                }
-            }
-        },
-        {
-            "path": "/api/users",
-            "method": "POST",
-            "request": {
-                "body": {
-                    "name": "string",
-                    "email": "string",
-                    "age": "number"
-                }
+        "response": {
+          "status": 200,
+          "headers": {
+            "Set-Cookie": "refresh_token={{uuid}}; HttpOnly; Secure; SameSite=Strict"
+          },
+          "body": {
+            "success": true,
+            "data": {
+              "access_token": "{{jwt_token}}",
+              "token_type": "Bearer",
+              "expires_in": 3600,
+              "user": {
+                "id": "{{uuid}}",
+                "email": "user@example.com",
+                "role": "customer"
+              }
             },
-            "response": {
-                "status": 201,
-                "body": {
-                    "id": "{{uuid}}",
-                    "name": "{{body:name}}",
-                    "email": "{{body:email}}",
-                    "created_at": "{{timestamp}}"
-                }
+            "meta": {
+              "timestamp": "{{timestamp}}"
             }
-        },
-        {
-            "path": "/api/users/:id",
-            "method": "DELETE",
-            "response": {
-                "status": 200,
-                "body": {
-                    "message": "User deleted",
-                    "id": "{{param:id}}"
-                }
-            }
+          }
         }
+      },
+      {
+        "path": "/api/v1/users",
+        "method": "GET",
+        "summary": "Get paginated users list with search & filters",
+        "request": {
+          "query_params": {
+            "page": 1,
+            "limit": 10,
+            "search": "สมชาย",
+            "status": "active",
+            "sort_by": "created_at",
+            "order": "desc"
+          }
+        },
+        "response": {
+          "status": 200,
+          "body": {
+            "success": true,
+            "data": [
+              {
+                "id": "{{uuid}}",
+                "first_name": "สมชาย",
+                "last_name": "ใจดี",
+                "email": "somchai@example.com",
+                "phone": "0812345678",
+                "avatar_url": "https://cdn.example.com/avatars/123.jpg",
+                "role": "customer",
+                "status": "active",
+                "email_verified": true,
+                "created_at": "{{timestamp}}",
+                "updated_at": "{{timestamp}}"
+              }
+            ],
+            "pagination": {
+              "current_page": 1,
+              "per_page": 10,
+              "total_items": 45,
+              "total_pages": 5,
+              "has_next": true,
+              "has_prev": false
+            }
+          }
+        }
+      },
+      {
+        "path": "/api/v1/users/:id",
+        "method": "GET",
+        "summary": "Get user details by ID",
+        "response": {
+          "status": 200,
+          "body": {
+            "success": true,
+            "data": {
+              "id": "{{param:id}}",
+              "first_name": "สมชาย",
+              "last_name": "ใจดี",
+              "email": "somchai@example.com",
+              "phone": "0812345678",
+              "avatar_url": "https://cdn.example.com/avatars/123.jpg",
+              "role": "customer",
+              "status": "active",
+              "preferences": {
+                "language": "th",
+                "notifications": {
+                  "email": true,
+                  "sms": false,
+                  "push": true
+                }
+              },
+              "stats": {
+                "total_orders": 12,
+                "total_spent": 15400.50
+              },
+              "created_at": "{{timestamp}}",
+              "updated_at": "{{timestamp}}"
+            }
+          }
+        }
+      },
+      {
+        "path": "/api/v1/users",
+        "method": "POST",
+        "summary": "Register/Create new user",
+        "request": {
+          "body": {
+            "first_name": "string (required)",
+            "last_name": "string (required)",
+            "email": "string (required, email format)",
+            "phone": "string (optional, thai phone format)",
+            "password": "string (min 8 chars)"
+          }
+        },
+        "response": {
+          "status": 201,
+          "body": {
+            "success": true,
+            "message": "User account created successfully",
+            "data": {
+              "id": "{{uuid}}",
+              "first_name": "{{body:first_name}}",
+              "last_name": "{{body:last_name}}",
+              "email": "{{body:email}}",
+              "phone": "{{body:phone}}",
+              "role": "customer",
+              "status": "pending_verification",
+              "created_at": "{{timestamp}}"
+            }
+          }
+        }
+      },
+      {
+        "path": "/api/v1/users/:id",
+        "method": "PATCH",
+        "summary": "Partial update user profile",
+        "request": {
+          "body": {
+            "first_name": "สมหญิง",
+            "phone": "0898765432"
+          }
+        },
+        "response": {
+          "status": 200,
+          "body": {
+            "success": true,
+            "message": "User updated successfully",
+            "data": {
+              "id": "{{param:id}}",
+              "first_name": "{{body:first_name}}",
+              "last_name": "ใจดี",
+              "email": "somchai@example.com",
+              "phone": "{{body:phone}}",
+              "updated_at": "{{timestamp}}"
+            }
+          }
+        }
+      },
+      {
+        "path": "/api/v1/users/:id/addresses",
+        "method": "GET",
+        "summary": "Get user shipping addresses (Sub-resource example)",
+        "response": {
+          "status": 200,
+          "body": {
+            "success": true,
+            "data": [
+              {
+                "id": "{{uuid}}",
+                "label": "บ้าน",
+                "recipient_name": "สมชาย ใจดี",
+                "phone": "0812345678",
+                "address_line1": "99/9 หมู่บ้านสุขสันต์ ถนนสุขุมวิท",
+                "sub_district": "คลองเตย",
+                "district": "คลองเตย",
+                "province": "กรุงเทพมหานคร",
+                "postal_code": "10110",
+                "is_default": true
+              }
+            ]
+          }
+        }
+      },
+      {
+        "path": "/api/v1/users/:id",
+        "method": "DELETE",
+        "summary": "Soft delete user",
+        "response": {
+          "status": 200,
+          "body": {
+            "success": true,
+            "message": "User account deactivated successfully",
+            "data": {
+              "id": "{{param:id}}",
+              "status": "archived",
+              "deleted_at": "{{timestamp}}"
+            }
+          }
+        }
+      },
+      {
+        "path": "/api/v1/users/validation-error-example",
+        "method": "POST",
+        "summary": "Standard Error Response Structure (Validation Failed Example)",
+        "response": {
+          "status": 422,
+          "body": {
+            "success": false,
+            "error": {
+              "code": "VALIDATION_ERROR",
+              "message": "The provided input parameters are invalid.",
+              "details": [
+                {
+                  "field": "email",
+                  "issue": "EMAIL_ALREADY_EXISTS",
+                  "message": "Email address is already registered."
+                },
+                {
+                  "field": "password",
+                  "issue": "TOO_SHORT",
+                  "message": "Password must be at least 8 characters long."
+                }
+              ]
+            },
+            "meta": {
+              "timestamp": "{{timestamp}}",
+              "trace_id": "req-9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d"
+            }
+          }
+        }
+      }
     ]
-}
+  }
