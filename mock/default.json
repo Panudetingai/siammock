@@ -1,0 +1,65 @@
+{
+    "routes": [
+        {
+            "path": "/api/users",
+            "method": "GET",
+            "response": {
+                "status": 200,
+                "body": {
+                    "users": [
+                        {
+                            "id": "{{uuid}}",
+                            "name": "{{thai_name}}",
+                            "email": "{{email}}",
+                            "created_at": "{{timestamp}}"
+                        }
+                    ],
+                    "total": 10
+                }
+            }
+        },
+        {
+            "path": "/api/users/:id",
+            "method": "GET",
+            "response": {
+                "status": 200,
+                "body": {
+                    "id": "{{param:id}}",
+                    "name": "{{thai_name}}",
+                    "email": "{{email}}"
+                }
+            }
+        },
+        {
+            "path": "/api/users",
+            "method": "POST",
+            "request": {
+                "body": {
+                    "name": "string",
+                    "email": "string",
+                    "age": "number"
+                }
+            },
+            "response": {
+                "status": 201,
+                "body": {
+                    "id": "{{uuid}}",
+                    "name": "{{body:name}}",
+                    "email": "{{body:email}}",
+                    "created_at": "{{timestamp}}"
+                }
+            }
+        },
+        {
+            "path": "/api/users/:id",
+            "method": "DELETE",
+            "response": {
+                "status": 200,
+                "body": {
+                    "message": "User deleted",
+                    "id": "{{param:id}}"
+                }
+            }
+        }
+    ]
+}
