@@ -1,0 +1,33 @@
+{
+  "files.associations": {
+    "*.jsonsi": "jsonsi"
+  },
+  "json.schemas": [
+    {
+      "fileMatch": ["*.jsonsi", "mock/*.json"],
+      "url": "./siammock.schema.json"
+    }
+  ],
+  "json.validate.enable": true,
+  "siammock.binaryPath": "${workspaceFolder}/target/debug/SiamMock.exe",
+  "siammock.validateOnChange": true,
+  "siammock.validateDebounceMs": 400,
+  "siammock.mockJsonGlob": "mock/*",
+  "[jsonsi]": {
+    "editor.quickSuggestions": {
+      "strings": true,
+      "other": true,
+      "comments": false
+    },
+    "editor.suggest.showIcons": true,
+    "editor.formatOnSave": true
+  },
+  "[json]": {
+    "editor.quickSuggestions": {
+      "strings": true,
+      "other": true,
+      "comments": false
+    },
+    "editor.suggest.showIcons": true
+  }
+}
