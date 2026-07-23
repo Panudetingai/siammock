@@ -10,23 +10,22 @@ use axum::{
 use serde_json::json;
 
 use crate::{
-    config::schema::{MockConfig, MockRoute},
-    data::CsvStore,
-    response::template::{RenderContext, render_response},
-    validation::body::validate_body,
+    config::schema::{MockConfig, MockRoute}, data::CsvStore, persistence::saver::save_request, response::template::{RenderContext, render_response}, validation::body::validate_body,
 };
 
 #[derive(Clone)]
 pub struct AppState {
     routes: Vec<MockRoute>,
     csv: CsvStore,
+    data_dir: String,
 }
 
 impl AppState {
-    pub fn new(config: MockConfig, csv: CsvStore) -> Self {
+    pub fn new(config: MockConfig, csv: CsvStore, data_dir: String) -> Self {
         Self {
             routes: config.routes,
             csv,
+            data_dir
         }
     }
 
@@ -92,6 +91,16 @@ pub async fn dispatch(
 
     let rendered = render_response(&route.response.body, &ctx);
     let status = StatusCode::from_u16(route.response.status).unwrap_or(StatusCode::OK);
+
+    // save response 
+
+    if let Some(save_spec) = &route.save {
+        if let Err(err) = save_request(save_spec, &rendered, &params, &state.data_dir) {
+            return (StatusCode::INTERNAL_SERVER_ERROR, Json(json!({
+                "error": format!("failed to save: {:?}", err)
+            }))).into_response();
+        }
+    }
 
     (status, Json(rendered)).into_response()
 }

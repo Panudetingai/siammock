@@ -15,9 +15,6 @@
       },
       "response": {
         "status": 200,
-        "headers": {
-          "Set-Cookie": "refresh_token={{uuid}}; HttpOnly; Secure; SameSite=Strict"
-        },
         "body": {
           "success": true,
           "data": {
@@ -40,6 +37,13 @@
       "path": "/api/v1/users",
       "method": "GET",
       "summary": "Get paginated users list with search & filters",
+      "save": {
+      "format": "csv",
+      "file": "saved/users.csv",
+      "mode": "overwrite",
+      "path": "data",
+      "columns": ["id", "first_name", "last_name", "email", "phone", "avatar_url", "role", "status", "email_verified"]
+    },
       "request": {
         "query_params": {
           "page": 1,
@@ -57,9 +61,9 @@
           "data": [
             {
               "id": "{{uuid}}",
-              "first_name": "สมชาย",
-              "last_name": "ใจดี",
-              "email": "somchai@example.com",
+              "first_name": "{{thai_name}}",
+              "last_name": "{{thai_name}}",
+              "email": "{{email}}",
               "phone": "0812345678",
               "avatar_url": "https://cdn.example.com/avatars/123.jpg",
               "role": "customer",
@@ -69,6 +73,7 @@
               "updated_at": "{{timestamp}}"
             }
           ],
+          "total": 100,
           "pagination": {
             "current_page": 1,
             "per_page": 10,

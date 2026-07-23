@@ -7,6 +7,7 @@ mod handlers;
 mod response;
 mod router;
 mod validation;
+mod persistence;
 
 use clap::Parser;
 use cli::{Cli, Commands, ValidateArgs};

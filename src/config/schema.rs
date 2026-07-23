@@ -3,6 +3,18 @@ use std::collections::HashMap;
 use serde::Deserialize;
 use serde_json::Value;
 
+#[derive(Deserialize, Clone)]
+pub struct SaveSpec {
+    pub format: String,
+    pub file: String,
+    #[serde(default)]
+    pub path: Option<String>,
+    #[serde(default)]
+    pub mode: String,
+    #[serde(default)]
+    pub columns: Option<Vec<String>>,
+}
+
 #[derive(Deserialize)]
 pub struct MockConfig {
     pub routes: Vec<MockRoute>,
@@ -17,6 +29,7 @@ pub struct MockRoute {
     pub summary: Option<String>,
     pub request: Option<RequestSpec>,
     pub response: ResponseSpec,
+    pub save: Option<SaveSpec>,
 }
 
 #[derive(Deserialize, Clone)]

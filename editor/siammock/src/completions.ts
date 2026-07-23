@@ -69,6 +69,7 @@ const ROUTE_KEYS = [
   { key: "summary", detail: "Human-readable description" },
   { key: "request", detail: "Request matching spec" },
   { key: "response", detail: "Response template" },
+  { key: "save", detail: "Response save specification" },
 ];
 
 const REQUEST_KEYS = [

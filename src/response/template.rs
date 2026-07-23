@@ -2,6 +2,7 @@ use std::collections::HashMap;
 
 use chrono::Utc;
 use rand::Rng;
+use rand::distributions::{Alphanumeric, DistString};
 use serde::Serialize;
 use serde_json::{Map, Value};
 use uuid::Uuid;
@@ -11,6 +12,8 @@ use crate::data::CsvStore;
 use crate::response::constants::{CURRENCIES, EN_NAMES, PAYMENT_METHODS, PAYMENT_STATUSES, STATUS, THAI_NAMES};
 
 const MAX_REPEAT: usize = 1_000;
+
+
 
 pub struct RenderContext<'a> {
     pub params: &'a HashMap<String, String>,
@@ -220,8 +223,8 @@ fn random_jwt_token() -> String {
 }
 
 fn random_thai_name() -> String {
-    let index = rand::thread_rng().gen_range(0..THAI_NAMES.len());
-    THAI_NAMES[index].to_string()
+    let random_text = Alphanumeric.sample_string(&mut rand::thread_rng(), 6);
+    format!("{}", random_text)
 }
 
 fn random_en_name() -> String {

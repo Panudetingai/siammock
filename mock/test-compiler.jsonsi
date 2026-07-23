@@ -16,7 +16,7 @@
       "response": {
         "status": 200,
         "headers": {
-          "Set-Cookie": "refresh_token={{uuid}}; HttpOnly; Secure; SameSite=Strict"
+          "Set-Cookie": "refresh_token={{jwt_token}}; HttpOnly; Secure; SameSite=Strict"
         },
         "body": {
           "success": true,

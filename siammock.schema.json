@@ -32,6 +32,7 @@
           "type": "string",
           "description": "Human-readable route description"
         },
+        "save": { "$ref": "#/$defs/saveSpec" },
         "request": { "$ref": "#/$defs/requestSpec" },
         "response": { "$ref": "#/$defs/responseSpec" }
       }
@@ -64,6 +65,18 @@
     "stringMap": {
       "type": "object",
       "additionalProperties": { "type": "string" }
+    },
+    "saveSpec": {
+      "type": "object",
+      "required": ["format", "file", "mode"],
+      "additionalProperties": false,
+      "properties": {
+        "path": { "type": "string", "description": "Path response body to save, e.g. data.users" },
+        "format": { "type": "string", "enum": ["json", "csv"] },
+        "file": { "type": "string", "description": "File name to save, e.g. users" },
+        "mode": { "type": "string", "enum": ["append", "overwrite"], "description": "Append or overwrite the file" },
+        "columns": { "type": "array", "items": { "type": "string" }, "description": "Columns to save, e.g. [\"id\", \"name\", \"email\"]" }
+      }
     },
     "valueMap": {
       "type": "object",
