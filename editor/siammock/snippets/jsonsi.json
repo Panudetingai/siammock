@@ -1,0 +1,32 @@
+{
+  "New SiamMock Route": {
+    "prefix": "route",
+    "body": [
+      "{",
+      "  \"path\": \"/api/v1/${1:resource}\",",
+      "  \"method\": \"${2|GET,POST,PUT,PATCH,DELETE|}\",",
+      "  \"summary\": \"${3:Description}\",",
+      "  \"response\": {",
+      "    \"status\": ${4:200},",
+      "    \"body\": {",
+      "      \"success\": true,",
+      "      \"data\": {",
+      "        \"id\": \"{{uuid}}\"",
+      "      }",
+      "    }",
+      "  }",
+      "}"
+    ],
+    "description": "Insert a SiamMock route template"
+  },
+  "Placeholder UUID": {
+    "prefix": "uuid",
+    "body": "{{uuid}}",
+    "description": "Insert {{uuid}} placeholder"
+  },
+  "Placeholder Timestamp": {
+    "prefix": "timestamp",
+    "body": "{{timestamp}}",
+    "description": "Insert {{timestamp}} placeholder"
+  }
+}

@@ -1,32 +1,5 @@
-pub const THAI_NAMES: &[&str] = &[
-    "สมชาย ใจดี",
-    "สมหญิง รักเรียน",
-    "วิชัย มั่นคง",
-    "นภา สุขใจ",
-    "ประเสริฐ เก่งกาจ",
-    "มาลี งามดี",
-];
-
-pub const EN_NAMES: &[&str] = &[
-    "John Doe",
-    "Jane Smith",
-    "Michael Brown",
-    "Emily Johnson",
-    "David Lee",
-    "Olivia Wilson",
-];
-
 pub const CURRENCIES: &[&str] = &[
-    "THB",
-    "USD",
-    "EUR",
-    "JPY",
-    "KRW",
-    "CNY",
-    "INR",
-    "BRL",
-    "MXN",
-    "ZAR",
+    "THB", "USD", "EUR", "JPY", "KRW", "CNY", "INR", "BRL", "MXN", "ZAR",
 ];
 
 pub const PAYMENT_METHODS: &[&str] = &[

@@ -1,0 +1,68 @@
+{
+  "files.associations": {
+    "*.jsonsi": "jsonsi"
+  },
+  "json.schemas": [
+    {
+      "fileMatch": ["*.jsonsi", "mock/*.json"],
+      "url": "./siammock.schema.json"
+    }
+  ],
+  "json.validate.enable": true,
+  "siammock.binaryPath": "${workspaceFolder}/target/debug/SiamMock.exe",
+  "siammock.validateOnChange": true,
+  "siammock.validateDebounceMs": 400,
+  "siammock.mockJsonGlob": "mock/*",
+  "[jsonsi]": {
+    "editor.quickSuggestions": {
+      "strings": true,
+      "other": true,
+      "comments": false
+    },
+    "editor.suggest.showIcons": true,
+    "editor.formatOnSave": true
+  },
+  "[json]": {
+    "editor.quickSuggestions": {
+      "strings": true,
+      "other": true,
+      "comments": false
+    },
+    "editor.suggest.showIcons": true
+  },  
+  "vim.easymotion": true,
+  "vim.incsearch": true,
+  "vim.useSystemClipboard": true,
+  "vim.useCtrlKeys": true,
+  "vim.hlsearch": true,
+  "vim.insertModeKeyBindings": [
+    {
+      "before": ["j", "j"],
+      "after": ["<Esc>"]
+    }
+  ],
+  "vim.normalModeKeyBindingsNonRecursive": [
+    {
+      "before": ["<leader>", "d"],
+      "after": ["d", "d"]
+    },
+    {
+      "before": ["<C-n>"],
+      "commands": [":nohl"]
+    },
+    {
+      "before": ["K"],
+      "commands": ["lineBreakInsert"],
+      "silent": true
+    }
+  ],
+  "vim.leader": "<space>",
+  "vim.handleKeys": {
+    "<C-a>": false,
+    "<C-f>": false
+  },
+  // To improve performance
+  "extensions.experimental.affinity": {
+    "vscodevim.vim": 1
+  }
+}

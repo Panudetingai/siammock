@@ -1,0 +1,86 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://siammock.dev/schema.json",
+  "title": "SiamMock API Config",
+  "description": "SiamMock mock API route definitions (.json / .jsonsi)",
+  "type": "object",
+  "required": ["routes"],
+  "additionalProperties": false,
+  "properties": {
+    "routes": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/route" }
+    }
+  },
+  "$defs": {
+    "route": {
+      "type": "object",
+      "required": ["path", "method", "response"],
+      "additionalProperties": false,
+      "properties": {
+        "path": {
+          "type": "string",
+          "pattern": "^/",
+          "description": "Route path, e.g. /api/v1/users/:id"
+        },
+        "method": {
+          "type": "string",
+          "enum": ["GET", "POST", "PUT", "PATCH", "DELETE", "HEAD", "OPTIONS"]
+        },
+        "summary": {
+          "type": "string",
+          "description": "Human-readable route description"
+        },
+        "save": { "$ref": "#/$defs/saveSpec" },
+        "request": { "$ref": "#/$defs/requestSpec" },
+        "response": { "$ref": "#/$defs/responseSpec" }
+      }
+    },
+    "requestSpec": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "headers": { "$ref": "#/$defs/stringMap" },
+        "query_params": { "$ref": "#/$defs/valueMap" },
+        "body": { "$ref": "#/$defs/valueMap" }
+      }
+    },
+    "responseSpec": {
+      "type": "object",
+      "required": ["status", "body"],
+      "additionalProperties": false,
+      "properties": {
+        "status": {
+          "type": "integer",
+          "minimum": 100,
+          "maximum": 599
+        },
+        "headers": { "$ref": "#/$defs/stringMap" },
+        "body": {
+          "description": "Response template. Use {{uuid}}, {{timestamp}}, {{param:id}}, {{body:field}}, etc."
+        }
+      }
+    },
+    "stringMap": {
+      "type": "object",
+      "additionalProperties": { "type": "string" }
+    },
+    "saveSpec": {
+      "type": "object",
+      "required": ["format", "file", "mode"],
+      "additionalProperties": false,
+      "properties": {
+        "path": { "type": "string", "description": "Path response body to save, e.g. data.users" },
+        "format": { "type": "string", "enum": ["json", "csv"] },
+        "file": { "type": "string", "description": "File name to save, e.g. users" },
+        "mode": { "type": "string", "enum": ["append", "overwrite"], "description": "Append or overwrite the file" },
+        "columns": { "type": "array", "items": { "type": "string" }, "description": "Columns to save, e.g. [\"id\", \"name\", \"email\"]" }
+      }
+    },
+    "valueMap": {
+      "type": "object",
+      "additionalProperties": true
+    }
+  }
+}

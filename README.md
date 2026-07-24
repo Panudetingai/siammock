@@ -21,6 +21,7 @@ High-speed Mock API server ที่เขียน config ด้วย JSON อ
 ## Requirements
 
 - [Rust](https://rustup.rs/) 1.70+ (edition 2024)
+- [Node.js](https://nodejs.org/) 18+ — สำหรับ compile VS Code extension (optional)
 
 ---
 
@@ -85,6 +86,162 @@ cargo install cargo-watch
 
 cargo watch -x 'run -- start -c mock'
 ```
+
+---
+
+## VS Code / Cursor Extension
+
+SiamMock มี extension สำหรับ **VS Code** และ **Cursor** ช่วยเขียน config ได้เร็วขึ้น — มี autocomplete, JSON schema, realtime validation และไอคอนไฟล์เฉพาะ
+
+Extension อยู่ในโฟลเดอร์ `editor/siammock/` (publisher: `siammock`, ชื่อ **SiamMock Config Editor**)
+
+### สิ่งที่ extension ทำให้
+
+| ฟีเจอร์ | รายละเอียด |
+|---------|------------|
+| **Realtime validation** | ตรวจ config ขณะพิมพ์ โดยเรียก binary `SiamMock validate` ใน background |
+| **Autocomplete** | แนะนำ HTTP method, placeholder `{{...}}`, field keys, body types |
+| **JSON Schema** | ตรวจโครงสร้าง JSON ตาม `siammock.schema.json` |
+| **Snippets** | พิมพ์ `route` แล้วกด Tab เพื่อสร้าง route template |
+| **ไอคอนไฟล์** | ไฟล์ `.jsonsi` แสดงไอคอน SiamMock ใน Explorer |
+
+### Requirements (ก่อนติดตั้ง extension)
+
+- [Node.js](https://nodejs.org/) 18+ (สำหรับ compile extension)
+- Rust toolchain + build binary แล้ว (`cargo build`) — extension ใช้ binary นี้ validate config
+
+### ติดตั้ง (ครั้งแรก)
+
+```bash
+# 1. build SiamMock binary (validator ใช้ตัวนี้)
+cargo build
+
+# 2. compile extension
+cd editor/siammock
+npm install
+npm run compile
+```
+
+จากนั้นใน **VS Code** หรือ **Cursor**:
+
+1. เปิด Command Palette (`Cmd+Shift+P` / `Ctrl+Shift+P`)
+2. เลือก **Developer: Install Extension from Location...**
+3. เลือกโฟลเดอร์ `editor/siammock`
+4. รัน **Developer: Reload Window**
+
+> โปรเจกต์แนะนำ extension นี้ใน `.vscode/extensions.json` — เมื่อเปิด workspace จะมี popup ให้ติดตั้งได้
+
+### อัปเดต extension หลังแก้โค้ด
+
+```bash
+cd editor/siammock
+npm run compile
+```
+
+แล้ว **Reload Window** ใน VS Code / Cursor
+
+ถ้าจะแจกเป็นไฟล์ `.vsix`:
+
+```bash
+cd editor/siammock
+npm install -g @vscode/vsce   # ครั้งแรกเท่านั้น
+npm run package               # ได้ไฟล์ .vsix
+```
+
+ติดตั้งจาก `.vsix`: Command Palette → **Extensions: Install from VSIX...**
+
+### ประเภทไฟล์ config
+
+| ไฟล์ | คำอธิบาย |
+|------|----------|
+| `*.jsonsi` | ไฟล์ config หลักของ SiamMock (มี syntax + ไอคอนเฉพาะ) |
+| `mock/*.json` | รูปแบบเดิม ยังรองรับ validation และ autocomplete |
+
+แนะนำสร้าง config ใหม่เป็น `.jsonsi` เช่น `mock/users.jsonsi`
+
+### วิธีใช้งาน
+
+#### 1. Realtime validation
+
+เปิดไฟล์ `.jsonsi` หรือ `mock/*.json` — extension จะ validate อัตโนมัติเมื่อพิมพ์ (debounce ~400ms) และเมื่อ save
+
+- error/warning แสดงใน **Problems** panel
+- ถ้า binary ยังไม่ build จะขึ้นข้อความให้รัน `cargo build`
+
+Validate เองได้จาก Command Palette:
+
+```
+SiamMock: Validate Active File
+```
+
+หรือจาก terminal:
+
+```bash
+cargo run -- validate -c mock/default.json
+cargo run -- validate -c mock/
+```
+
+#### 2. Autocomplete
+
+| จุดที่พิมพ์ | สิ่งที่แนะนำ |
+|-------------|-------------|
+| `"method": "` | GET, POST, PUT, PATCH, DELETE, … |
+| `{{` | uuid, timestamp, thai_name, email, param:id, body:field, csv:… |
+| `{` หรือ `,` ใน route object | path, method, response, request, summary |
+| `"body": { ... "` | string, number, boolean, string[], string (required), … |
+
+> placeholder `{{param:id}}` และ `{{body:field}}` จะแนะนำจาก path/body ใน route เดียวกันอัตโนมัติ
+
+#### 3. Snippets
+
+ในไฟล์ `.jsonsi` หรือ `mock/*.json` พิมพ์ `route` แล้วกด **Tab** เพื่อแทรก route template พร้อมโครงสร้าง request/response
+
+#### 4. รัน mock server คู่กับ extension
+
+```bash
+# terminal 1 — server
+cargo run -- start -c mock
+
+# terminal 2 (optional) — hot reload config
+cargo watch -x 'run -- start -c mock'
+```
+
+แก้ config ใน editor → ดู validation ทันที → save → ทดสอบด้วย curl หรือ REST Client
+
+### Extension settings
+
+ตั้งค่าใน **Settings** (`Cmd+,` / `Ctrl+,`) ค้นหา `siammock`:
+
+| Setting | Default | คำอธิบาย |
+|---------|---------|----------|
+| `siammock.binaryPath` | auto-detect | path ไปยัง SiamMock binary |
+| `siammock.validateOnChange` | `true` | validate ขณะพิมพ์ |
+| `siammock.validateDebounceMs` | `400` | หน่วง ms ก่อน re-validate |
+| `siammock.mockJsonGlob` | `mock/*` | glob ของไฟล์ `.json` ที่ validate |
+
+ตัวอย่างใน `.vscode/settings.json`:
+
+```json
+{
+  "siammock.binaryPath": "${workspaceFolder}/target/debug/SiamMock",
+  "siammock.validateOnChange": true,
+  "siammock.validateDebounceMs": 400,
+  "siammock.mockJsonGlob": "mock/*"
+}
+```
+
+> บน macOS/Linux binary อยู่ที่ `target/debug/SiamMock` — บน Windows ใช้ `SiamMock.exe`
+
+### Troubleshooting
+
+| ปัญหา | วิธีแก้ |
+|-------|---------|
+| ไม่มี autocomplete | Reload Window หลังติดตั้ง extension |
+| Validation ไม่ทำงาน | รัน `cargo build` ให้ binary อยู่ใน `target/debug/` |
+| ไฟล์ `.json` ไม่ validate | ตรวจว่าไฟล์อยู่ใน glob `siammock.mockJsonGlob` (default: `mock/*`) |
+| แก้ extension แล้วไม่เห็นผล | `npm run compile` แล้ว Reload Window |
+
+รายละเอียดเพิ่มเติม: [`editor/siammock/README.md`](editor/siammock/README.md)
 
 ---
 
@@ -366,6 +523,8 @@ siammock/
 │   └── payment.json
 ├── data/                  # CSV exports from database
 │   └── users.csv
+├── editor/
+│   └── siammock/          # VS Code / Cursor extension
 ├── src/
 │   ├── main.rs
 │   ├── app.rs             # Server startup

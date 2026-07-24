@@ -1,14 +1,17 @@
 use std::collections::HashMap;
 
 use chrono::Utc;
+use jsonwebtoken::{Algorithm, EncodingKey, Header};
 use rand::Rng;
+use rand::distributions::{Alphanumeric, DistString};
 use serde::Serialize;
 use serde_json::{Map, Value};
 use uuid::Uuid;
-use jsonwebtoken::{Header, EncodingKey, Algorithm};
 
 use crate::data::CsvStore;
-use crate::response::constants::{CURRENCIES, EN_NAMES, PAYMENT_METHODS, PAYMENT_STATUSES, STATUS, THAI_NAMES};
+use crate::response::constants::{
+    CURRENCIES, PAYMENT_METHODS, PAYMENT_STATUSES, STATUS,
+};
 
 const MAX_REPEAT: usize = 1_000;
 
@@ -26,7 +29,9 @@ pub fn render_response(template: &Value, ctx: &RenderContext<'_>) -> Value {
 fn render_value(value: &Value, ctx: &RenderContext<'_>) -> Value {
     match value {
         Value::String(text) => render_string(text, ctx),
-        Value::Array(items) => Value::Array(items.iter().map(|item| render_value(item, ctx)).collect()),
+        Value::Array(items) => {
+            Value::Array(items.iter().map(|item| render_value(item, ctx)).collect())
+        }
         Value::Object(map) => render_object(map, ctx),
         other => other.clone(),
     }
@@ -37,7 +42,9 @@ fn render_object(map: &Map<String, Value>, ctx: &RenderContext<'_>) -> Value {
         return render_repeat_spec(map, ctx);
     }
 
-    let total = map.get("total").and_then(|value| resolve_repeat_count(value, ctx));
+    let total = map
+        .get("total")
+        .and_then(|value| resolve_repeat_count(value, ctx));
 
     let rendered = map
         .iter()
@@ -92,9 +99,7 @@ fn resolve_repeat_count(value: &Value, ctx: &RenderContext<'_>) -> Option<usize>
         Value::Number(number) => number.as_u64().map(|n| n as usize),
         Value::String(text) => {
             if is_placeholder(text) {
-                return resolve_placeholder(text, ctx)
-                    .as_u64()
-                    .map(|n| n as usize);
+                return resolve_placeholder(text, ctx).as_u64().map(|n| n as usize);
             }
             text.parse().ok()
         }
@@ -165,10 +170,7 @@ fn resolve_placeholder(token: &str, ctx: &RenderContext<'_>) -> Value {
             .map(|i| Value::Number((i as u64).into()))
             .unwrap_or(Value::Null),
         key if key.starts_with("index:") => {
-            let offset = key
-                .trim_start_matches("index:")
-                .parse::<u64>()
-                .unwrap_or(0);
+            let offset = key.trim_start_matches("index:").parse::<u64>().unwrap_or(0);
             ctx.index
                 .map(|i| Value::Number((i as u64 + offset).into()))
                 .unwrap_or(Value::Null)
@@ -211,28 +213,27 @@ fn random_jwt_token() -> String {
         exp: Utc::now().timestamp() + 3600,
     };
     let header = Header::new(Algorithm::HS256);
-    let token = jsonwebtoken::encode(
-        &header, 
-        &claims, 
-        &EncodingKey::from_secret(b"secret")
-    ).unwrap();
+    let token =
+        jsonwebtoken::encode(&header, &claims, &EncodingKey::from_secret(b"secret")).unwrap();
     token
 }
 
 fn random_thai_name() -> String {
-    let index = rand::thread_rng().gen_range(0..THAI_NAMES.len());
-    THAI_NAMES[index].to_string()
+    let random_text = Alphanumeric.sample_string(&mut rand::thread_rng(), 6);
+    format!("{}", random_text)
 }
 
 fn random_en_name() -> String {
-    let index = rand::thread_rng().gen_range(0..EN_NAMES.len());
-    EN_NAMES[index].to_string()
+    let random_text = Alphanumeric.sample_string(&mut rand::thread_rng(), 6);
+    format!("{}", random_text)
 }
 
 fn random_string() -> String {
     let length = rand::thread_rng().gen_range(1..=10);
     let mut rng = rand::thread_rng();
-    let chars: Vec<char> = (0..length).map(|_| rng.sample(rand::distributions::Alphanumeric) as char).collect();
+    let chars: Vec<char> = (0..length)
+        .map(|_| rng.sample(rand::distributions::Alphanumeric) as char)
+        .collect();
     chars.iter().collect()
 }
 
@@ -255,7 +256,6 @@ fn random_status() -> String {
     let index = rand::thread_rng().gen_range(0..STATUS.len());
     STATUS[index].to_string()
 }
-
 
 fn random_email() -> String {
     let number = rand::thread_rng().gen_range(1000..9999);

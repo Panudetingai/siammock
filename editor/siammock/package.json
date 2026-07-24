@@ -1,0 +1,100 @@
+{
+  "name": "siammock-editor",
+  "displayName": "SiamMock Config Editor",
+  "description": "Realtime SiamMock config validation, autocomplete, and icons for .jsonsi and mock/*.json files",
+  "version": "0.2.0",
+  "publisher": "siammock",
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": ["Linters", "Other"],
+  "activationEvents": [
+    "onLanguage:jsonsi",
+    "onLanguage:json"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "languages": [
+      {
+        "id": "jsonsi",
+        "aliases": ["SiamMock Config", "jsonsi"],
+        "extensions": [".jsonsi"],
+        "configuration": "./language-configuration.json",
+        "icon": {
+          "light": "./icons/jsonsi-light.svg",
+          "dark": "./icons/jsonsi-dark.svg"
+        }
+      }
+    ],
+    "grammars": [
+      {
+        "language": "jsonsi",
+        "scopeName": "source.json.jsonsi",
+        "path": "./syntaxes/jsonsi.tmLanguage.json"
+      }
+    ],
+    "snippets": [
+      {
+        "language": "jsonsi",
+        "path": "./snippets/jsonsi.json"
+      },
+      {
+        "language": "json",
+        "path": "./snippets/jsonsi.json"
+      }
+    ],
+    "jsonValidation": [
+      {
+        "fileMatch": "*.jsonsi",
+        "url": "./schemas/siammock.schema.json"
+      },
+      {
+        "fileMatch": "/mock/*.json",
+        "url": "./schemas/siammock.schema.json"
+      }
+    ],
+    "commands": [
+      {
+        "command": "siammock.validateActiveFile",
+        "title": "SiamMock: Validate Active File",
+        "icon": "$(check-all)"
+      }
+    ],
+    "configuration": {
+      "title": "SiamMock",
+      "properties": {
+        "siammock.binaryPath": {
+          "type": "string",
+          "default": "",
+          "description": "Path to SiamMock binary. Leave empty to auto-detect target/debug or target/release."
+        },
+        "siammock.validateOnChange": {
+          "type": "boolean",
+          "default": true,
+          "description": "Validate config while typing (realtime)."
+        },
+        "siammock.validateDebounceMs": {
+          "type": "number",
+          "default": 400,
+          "minimum": 100,
+          "description": "Debounce delay in ms before re-validating after edits."
+        },
+        "siammock.mockJsonGlob": {
+          "type": "string",
+          "default": "mock/*",
+          "description": "Glob for legacy .json mock config files to validate."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "compile": "tsc -p .",
+    "watch": "tsc -watch -p .",
+    "package": "vsce package"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "@types/vscode": "^1.85.0",
+    "typescript": "^5.7.2"
+  }
+}

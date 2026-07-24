@@ -18,8 +18,14 @@ struct CsvTable {
 
 #[derive(Debug)]
 pub enum CsvError {
-    Read { path: PathBuf, source: std::io::Error },
-    Parse { path: PathBuf, source: csv::Error },
+    Read {
+        path: PathBuf,
+        source: std::io::Error,
+    },
+    Parse {
+        path: PathBuf,
+        source: csv::Error,
+    },
 }
 
 impl std::fmt::Display for CsvError {

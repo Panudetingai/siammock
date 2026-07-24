@@ -1,0 +1,21 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Debug SiamMock",
+      "type": "lldb",
+      "request": "launch",
+      "program": "${workspaceFolder}/target/debug/SiamMock.exe",
+      "cwd": "${workspaceFolder}",
+      "args": [],
+      "console": "integratedTerminal",
+      "preLaunchTask": "cargo build",
+
+      "initCommands": [
+        "command script import C:\\Users\\Philips\\.rustup\\toolchains\\stable-x86_64-pc-windows-msvc\\lib\\rustlib\\etc\\lldb_lookup.py",
+        "command source C:\\Users\\Philips\\.rustup\\toolchains\\stable-x86_64-pc-windows-msvc\\lib\\rustlib\\etc\\lldb_commands",
+        "type category enable Rust"
+      ]
+    }
+  ]
+}

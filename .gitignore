@@ -1,1 +1,4 @@
 /target
+editor/siammock/node_modules/
+editor/siammock/out/
+editor/siammock/*.vsix

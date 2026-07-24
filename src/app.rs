@@ -46,7 +46,7 @@ pub async fn run(args: StartArgs) {
         );
     }
 
-    let app: Router = build_router(config, csv_store);
+    let app: Router = build_router(config, csv_store, args.data);
 
     let addr = format!("{}:{}", "0.0.0.0", args.port);
     let listener = TcpListener::bind(&addr)

@@ -1,44 +1,44 @@
 {
-    "routes": [
-        {
-            "path": "/api/payment",
-            "method": "POST",
-            "request": {
-                "body": {
-                    "amount": "number",
-                    "currency": "string"
-                }
-            },
-            "response": {
-                "status": 200,
-                "body": {
-                    "transaction_id": "{{uuid}}",
-                    "amount": "{{body:amount}}",
-                    "currency": "{{body:currency}}"
-                }
-            }
-        },
-        {
-            "path": "/api/payment/:id",
-            "method": "GET",
-            "response": {
-                "status": 200,
-                "body": {
-                   "payments": [
-                    {
-                        "transaction_id": "{{param:id}}",
-                        "amount": "{{random_number}}",
-                        "currency": "THB",
-                        "repeat": 20,
-                        "metadata": {
-                            "payment_method": "{{payment_method}}",
-                            "payment_status": "{{payment_status}}"
-                        }
-                    }
-                    ],
-                    "total": 20
-                }
-            }
+  "routes": [
+    {
+      "path": "/api/payment",
+      "method": "POST",
+      "request": {
+        "body": {
+          "amount": "number",
+          "currency": "string"
         }
-    ]
+      },
+      "response": {
+        "status": 200,
+        "body": {
+          "transaction_id": "{{uuid}}",
+          "amount": "{{body:amount}}",
+          "currency": "{{body:currency}}"
+        }
+      }
+    },
+    {
+      "path": "/api/payment/:id",
+      "method": "GET",
+      "response": {
+        "status": 200,
+        "body": {
+          "payments": [
+            {
+              "transaction_id": "{{param:id}}",
+              "amount": "{{random_number}}",
+              "currency": "THB",
+              "repeat": 20,
+              "metadata": {
+                "payment_method": "{{payment_method}}",
+                "payment_status": "{{payment_status}}"
+              }
+            }
+          ],
+          "total": 20
+        }
+      }
+    }
+  ]
 }

@@ -51,7 +51,13 @@ fn is_validatable_type(expected: &str) -> bool {
     matches!(
         normalize_type(expected),
         Some(
-            "string" | "number" | "boolean" | "array" | "object" | "string[]" | "number[]"
+            "string"
+                | "number"
+                | "boolean"
+                | "array"
+                | "object"
+                | "string[]"
+                | "number[]"
                 | "boolean[]"
         )
     ) || expected.contains("(required")
@@ -60,16 +66,24 @@ fn is_validatable_type(expected: &str) -> bool {
 fn is_required_field(expected: &str) -> bool {
     matches!(
         normalize_type(expected),
-        Some("string" | "number" | "boolean" | "array" | "object" | "string[]" | "number[]" | "boolean[]")
+        Some(
+            "string"
+                | "number"
+                | "boolean"
+                | "array"
+                | "object"
+                | "string[]"
+                | "number[]"
+                | "boolean[]"
+        )
     ) || expected.contains("(required")
 }
 
 fn normalize_type(expected: &str) -> Option<&str> {
     let base = expected.split_whitespace().next()?.trim();
     match base {
-        "string" | "number" | "boolean" | "array" | "object" | "string[]" | "number[]" | "boolean[]" => {
-            Some(base)
-        }
+        "string" | "number" | "boolean" | "array" | "object" | "string[]" | "number[]"
+        | "boolean[]" => Some(base),
         _ => None,
     }
 }
@@ -83,9 +97,15 @@ fn type_mismatch(expected: &str, actual: &Value) -> Option<String> {
         "boolean" => actual.is_boolean(),
         "array" => actual.is_array(),
         "object" => actual.is_object(),
-        "string[]" => actual.as_array().is_some_and(|items| items.iter().all(Value::is_string)),
-        "number[]" => actual.as_array().is_some_and(|items| items.iter().all(Value::is_number)),
-        "boolean[]" => actual.as_array().is_some_and(|items| items.iter().all(Value::is_boolean)),
+        "string[]" => actual
+            .as_array()
+            .is_some_and(|items| items.iter().all(Value::is_string)),
+        "number[]" => actual
+            .as_array()
+            .is_some_and(|items| items.iter().all(Value::is_number)),
+        "boolean[]" => actual
+            .as_array()
+            .is_some_and(|items| items.iter().all(Value::is_boolean)),
         _ => false,
     };
 
@@ -129,7 +149,10 @@ mod tests {
         let body = json!({});
 
         let err = validate_body(&schema, &body).unwrap_err();
-        assert_eq!(err.get("name").map(String::as_str), Some("missing required field"));
+        assert_eq!(
+            err.get("name").map(String::as_str),
+            Some("missing required field")
+        );
     }
 
     #[test]
