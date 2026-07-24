@@ -1,16 +1,20 @@
 use std::collections::HashMap;
 
 use axum::{
+    Json,
     body::Bytes,
     extract::State,
     http::{Method, StatusCode, Uri},
     response::{IntoResponse, Response},
-    Json,
 };
 use serde_json::json;
 
 use crate::{
-    config::schema::{MockConfig, MockRoute}, data::CsvStore, persistence::saver::save_request, response::template::{RenderContext, render_response}, validation::body::validate_body,
+    config::schema::{MockConfig, MockRoute},
+    data::CsvStore,
+    persistence::saver::save_request,
+    response::template::{RenderContext, render_response},
+    validation::body::validate_body,
 };
 
 #[derive(Clone)]
@@ -25,11 +29,15 @@ impl AppState {
         Self {
             routes: config.routes,
             csv,
-            data_dir
+            data_dir,
         }
     }
 
-    pub fn match_route(&self, method: &str, path: &str) -> Option<(MockRoute, HashMap<String, String>)> {
+    pub fn match_route(
+        &self,
+        method: &str,
+        path: &str,
+    ) -> Option<(MockRoute, HashMap<String, String>)> {
         for route in &self.routes {
             if !method.eq_ignore_ascii_case(&route.method) {
                 continue;
@@ -76,7 +84,8 @@ pub async fn dispatch(
             };
 
             if let Err(errors) = validate_body(body_schema, body_value) {
-                return (StatusCode::BAD_REQUEST, Json(json!({ "errors": errors }))).into_response();
+                return (StatusCode::BAD_REQUEST, Json(json!({ "errors": errors })))
+                    .into_response();
             }
         }
     }
@@ -92,13 +101,17 @@ pub async fn dispatch(
     let rendered = render_response(&route.response.body, &ctx);
     let status = StatusCode::from_u16(route.response.status).unwrap_or(StatusCode::OK);
 
-    // save response 
+    // save response
 
     if let Some(save_spec) = &route.save {
         if let Err(err) = save_request(save_spec, &rendered, &params, &state.data_dir) {
-            return (StatusCode::INTERNAL_SERVER_ERROR, Json(json!({
-                "error": format!("failed to save: {:?}", err)
-            }))).into_response();
+            return (
+                StatusCode::INTERNAL_SERVER_ERROR,
+                Json(json!({
+                    "error": format!("failed to save: {:?}", err)
+                })),
+            )
+                .into_response();
         }
     }
 

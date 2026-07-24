@@ -7,7 +7,6 @@ use crate::{
     config::schema::MockConfig,
     data::CsvStore,
     handlers::mock::{AppState, dispatch},
-
 };
 
 pub fn build_router(config: MockConfig, csv: CsvStore, data_dir: String) -> Router {

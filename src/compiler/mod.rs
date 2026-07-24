@@ -58,10 +58,7 @@ pub fn validate(source: &str) -> CompileResult {
         .iter()
         .any(|diagnostic| diagnostic.severity == Severity::Error);
 
-    CompileResult {
-        valid,
-        diagnostics,
-    }
+    CompileResult { valid, diagnostics }
 }
 
 pub fn validate_with_path(source: &str, file_path: &str) -> CompileResult {
@@ -98,10 +95,12 @@ mod tests {
 
         let result = validate(source);
         assert!(!result.valid);
-        assert!(result
-            .diagnostics
-            .iter()
-            .any(|diagnostic| diagnostic.code == "UNKNOWN_PLACEHOLDER"));
+        assert!(
+            result
+                .diagnostics
+                .iter()
+                .any(|diagnostic| diagnostic.code == "UNKNOWN_PLACEHOLDER")
+        );
     }
 
     #[test]
@@ -116,10 +115,12 @@ mod tests {
 
         let result = validate(source);
         assert!(!result.valid);
-        assert!(result
-            .diagnostics
-            .iter()
-            .any(|diagnostic| diagnostic.code == "INVALID_HTTP_METHOD"));
+        assert!(
+            result
+                .diagnostics
+                .iter()
+                .any(|diagnostic| diagnostic.code == "INVALID_HTTP_METHOD")
+        );
     }
 
     #[test]
@@ -137,10 +138,12 @@ mod tests {
 
         let result = validate(source);
         assert!(!result.valid);
-        assert!(result
-            .diagnostics
-            .iter()
-            .any(|diagnostic| diagnostic.code == "UNRESOLVED_PARAM"));
+        assert!(
+            result
+                .diagnostics
+                .iter()
+                .any(|diagnostic| diagnostic.code == "UNRESOLVED_PARAM")
+        );
     }
 
     #[test]
@@ -148,9 +151,11 @@ mod tests {
         let source = r#"{ "routes": [ { "path": "/broken" "#;
         let result = validate(source);
         assert!(!result.valid);
-        assert!(result
-            .diagnostics
-            .iter()
-            .any(|diagnostic| diagnostic.code == "JSON_SYNTAX"));
+        assert!(
+            result
+                .diagnostics
+                .iter()
+                .any(|diagnostic| diagnostic.code == "JSON_SYNTAX")
+        );
     }
 }

@@ -4,10 +4,10 @@ mod compiler;
 mod config;
 mod data;
 mod handlers;
+mod persistence;
 mod response;
 mod router;
 mod validation;
-mod persistence;
 
 use clap::Parser;
 use cli::{Cli, Commands, ValidateArgs};
@@ -45,11 +45,7 @@ fn run_validate(args: ValidateArgs) -> Result<(), i32> {
         print_human_diagnostics(&combined);
     }
 
-    if combined.valid {
-        Ok(())
-    } else {
-        Err(1)
-    }
+    if combined.valid { Ok(()) } else { Err(1) }
 }
 
 fn validate_stdin(args: &ValidateArgs) -> Result<compiler::CompileResult, i32> {
@@ -63,10 +59,7 @@ fn validate_stdin(args: &ValidateArgs) -> Result<compiler::CompileResult, i32> {
             1
         })?;
 
-    let label = args
-        .file
-        .as_deref()
-        .unwrap_or("<stdin>");
+    let label = args.file.as_deref().unwrap_or("<stdin>");
 
     Ok(compiler::validate_with_path(&source, label))
 }
@@ -110,7 +103,11 @@ fn print_human_diagnostics(result: &compiler::CompileResult) {
 
         eprintln!(
             "[{level}] {}:{}:{} {} — {}",
-            diagnostic.path, diagnostic.line, diagnostic.column, diagnostic.code, diagnostic.message
+            diagnostic.path,
+            diagnostic.line,
+            diagnostic.column,
+            diagnostic.code,
+            diagnostic.message
         );
 
         if let Some(hint) = &diagnostic.hint {

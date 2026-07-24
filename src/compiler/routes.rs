@@ -118,7 +118,10 @@ fn validate_request_body(
                 line,
                 column,
                 format!("field '{field}' looks like an example value, not a type descriptor"),
-                Some("Use type descriptors like \"string (required)\" to validate incoming requests".into()),
+                Some(
+                    "Use type descriptors like \"string (required)\" to validate incoming requests"
+                        .into(),
+                ),
             ));
         }
     }
@@ -132,7 +135,13 @@ fn is_known_type_descriptor(value: &str) -> bool {
     matches!(
         normalize_type(value),
         Some(
-            "string" | "number" | "boolean" | "array" | "object" | "string[]" | "number[]"
+            "string"
+                | "number"
+                | "boolean"
+                | "array"
+                | "object"
+                | "string[]"
+                | "number[]"
                 | "boolean[]"
         )
     )

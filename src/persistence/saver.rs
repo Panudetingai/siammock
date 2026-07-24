@@ -155,9 +155,10 @@ fn append_csv(path: &Path, body: &Value, spec: &SaveSpec) -> Result<(), SaveErro
 fn extract_save_target(body: &Value, path: Option<&str>) -> Result<Value, SaveError> {
     match path {
         None => Ok(body.clone()),
-        Some(key) => body.get(key).cloned().ok_or_else(|| {
-            SaveError::Parse(format!("path '{key}' not found in response"))
-        }),
+        Some(key) => body
+            .get(key)
+            .cloned()
+            .ok_or_else(|| SaveError::Parse(format!("path '{key}' not found in response"))),
     }
 }
 
